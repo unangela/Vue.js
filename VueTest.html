@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta name="author" content="unangela" />
+	<title>vue</title>
+</head>
+<style>
+	[v-cloak]{
+		display: none
+	}
+	body{
+		margin: 0;
+		padding: 0;
+	}
+	#left{
+	  position:absolute;
+	  left:0;
+	  width:25%;
+	  height:100%;
+	  background-color:#eee;
+	  font-size:15px;
+	  overflow:scroll;
+	}
+	#left div{
+	  height:2rem;
+	  line-height: 2rem;
+	  text-align:center;
+	}
+	.active{
+	  background-color:#FFF;
+	  color:red;
+	  font-size:17px;
+	}
+	#right{
+	  position:absolute;
+	  right:0;
+	  width:75%;
+	  height:100%;
+	  overflow:scroll;
+	}
+	.img-banner{
+	  height:8rem;
+	  width:100%;
+	}
+	#goods-list{
+	  display:flex;
+	  flex-wrap:wrap;
+	}
+	.goods-title{
+	  width:100%;
+	  font-size:15px;
+	  font-weight:bold;
+	  padding-left:0.6rem;
+	  margin-top:1rem;
+	}
+	.goods{
+	  width:5rem;
+	  font-size:14px;
+	  margin-left:0.6rem;
+	  margin-top:0.6rem;
+	  text-align:center;
+	}
+	.img{
+	  width:5rem;
+	  height:5rem;
+	}
+</style>
+<body>
+	<div class="classify">
+		<div id='left'>
+		    <div v-for="(item,index) in screenArray" v-bind:class={"active":isActive(index)} v-on:click="navbarTap(index)" v-text="item.screenName"></div>
+	  	</div>
+		<div id="right">
+		    <div id="goods-banner">	<!--右侧banner图-->
+		      <img :src="childrenArray.showImageUrl" class="img-banner" onClick="classifyTap()"></img>
+		    </div>
+		    <div id="goods-list" v-for="(item,index) in childrenArray.childrenScreenArray" >	<!--右侧分类组 循环-->
+		      <div class="goods-title" v-text="item.screenName"></div>
+		      <div class="goods" v-for="(items,index) in item.childrenScreenArray">		<!--组内小分类 循环-->
+		        <img class="img" :src="items.showImageUrl"></img>
+		        <span v-text="items.screenName"></span>
+		      </div>
+		    </div>	
+		</div>
+	</div>
+</body>
+<script src="js/jquery/jquery-1.8.2.min.js"></script>
+<script src="js/vue/vue.js"></script>
+<script>
+	//这里是服务器获取到的数据
+	$(document).ready(function(){
+		var data = [
+			{
+				childrenScreenArray:[
+					{
+						childrenScreenArray:[
+							{
+								screenName:"商品详情",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11701",
+							},
+							{
+								screenName:"商品详情",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11702",
+							},
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11703",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11704",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11705",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+							{
+								screenName:"商品详情",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11701",
+							},
+							{
+								screenName:"商品详情",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11702",
+							},
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11703",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11704",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11705",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+
+						],
+						screenName:"测试跳转",
+					},
+					{
+						childrenScreenArray:[
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11706",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11707",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11708",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11709",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11710",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+
+						],
+						screenName:"测试跳转",
+					}
+				],
+					screenId:10001,
+					screenName:"推荐分类",
+					forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11711",
+					showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/15/6defa7b9-ba85-418f-95ea-570574a94a74.png"
+			},
+			{
+				childrenScreenArray:[
+					{
+						childrenScreenArray:[
+							{
+								screenName:"lalalal",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11712",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11713",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11714",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11715",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11716",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+							{
+								screenName:"lalalal",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11712",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11713",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11714",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11715",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11716",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+
+						],
+						screenName:"hahaha",
+					},
+					{
+						childrenScreenArray:[
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11717",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11718",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11719",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11720",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+							{
+								screenName:"商品详情",
+								forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11721",
+								showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/20/bd69c849-a83e-4e24-be27-63a44fc31377.jpg"
+							},
+
+						],
+						screenName:"呜呜呜",
+					}
+				],
+				screenId:10005,
+				screenName:"便利超市",
+				forwardUrl:"jxhq://goods?http://uat.gfcarnival.com:8088/ACClient/jfsh/jfsh1001/queryBody.do?bodyId=11722",
+				showImageUrl:"http://uat.images.gfcarnival.com:5520//userfiles/images/ctfl/2017/12/15/9f4cc765-ecad-4bf1-8fdb-2d4718a01a9c.png"
+			},
+		]
+		screenArray = data;
+		app.childrenArray = screenArray[0];
+		app.screenArray = screenArray;
+	});
+
+	var screenId = "";
+	var screenArray = [];  //左侧导航栏内容
+	var childrenArray = [];  //右侧内容
+	
+	var app = new Vue({
+		el: '.classify',
+		data:{
+			screenArray:"",
+			childrenArray:"",
+			currentTab:0,
+		},
+		methods: {
+			isActive:function(e){
+				if(e == this.currentTab){return true;}else{return false;}
+			},
+			navbarTap:function(e){
+				if(e == this.currentTab){
+					return 0;
+				}else{
+					this.currentTab = e;
+					screenId = screenArray[e].screenId;
+					this.childrenArray = screenArray[e];
+					$("#right").scrollTop(0);
+				}
+			},
+		},
+	});
+
+</script>
+</html>
